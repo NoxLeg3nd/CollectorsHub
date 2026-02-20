@@ -85,4 +85,12 @@ public class ProductService {
         return new ResponseEntity<>(editProductDTO, HttpStatus.OK);
     }
 
+    public ResponseEntity<ProductDTO>  getProductById(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+        if(product.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(objectMapper.convertValue(product.get(), ProductDTO.class), HttpStatus.OK);
+    }
+
 }

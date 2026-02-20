@@ -40,4 +40,9 @@ public class ProductController {
     public ResponseEntity<EditProductDTO> editProduct(@RequestParam String name, @RequestParam String collection, @RequestParam Integer manufactureYear, @RequestBody EditProductDTO editProductDTO) {
         return productService.editProduct(name, collection, manufactureYear, editProductDTO);
     }
+
+    @GetMapping("/getProductById")
+    public ResponseEntity<ProductDTO> getProductById(@RequestParam Long id) {
+        return productService.getProductById(id);
+    }
 }
