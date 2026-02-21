@@ -1,9 +1,7 @@
 package com.unitbv.collectorshub.controllers;
 
-import com.unitbv.collectorshub.model.dto.AddProductDTO;
-import com.unitbv.collectorshub.model.dto.EditProductDTO;
-import com.unitbv.collectorshub.model.dto.ProductDTO;
-import com.unitbv.collectorshub.model.dto.RemoveProductDTO;
+import com.unitbv.collectorshub.model.dto.*;
+import com.unitbv.collectorshub.model.entities.Listing;
 import com.unitbv.collectorshub.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -44,5 +42,20 @@ public class ProductController {
     @GetMapping("/getProductById")
     public ResponseEntity<ProductDTO> getProductById(@RequestParam Long id) {
         return productService.getProductById(id);
+    }
+
+    @PostMapping("/addListing")
+    public ResponseEntity<AddListingDTO> addListing(@RequestBody AddListingDTO addListingDTO) {
+        return productService.addListing(addListingDTO);
+    }
+
+    @PutMapping("/editListing")
+    public ResponseEntity<EditListingDTO> editListing(@RequestParam Long id ,@RequestBody EditListingDTO editListingDTO) {
+        return productService.editListing(id ,editListingDTO);
+    }
+
+    @GetMapping("/getAllListings")
+    public ResponseEntity<List<ListingDTO>> getAllListings() {
+        return productService.getAllListings();
     }
 }

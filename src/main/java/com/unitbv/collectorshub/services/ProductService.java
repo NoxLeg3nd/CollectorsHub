@@ -1,17 +1,15 @@
 package com.unitbv.collectorshub.services;
 
-import com.unitbv.collectorshub.model.dto.AddProductDTO;
-import com.unitbv.collectorshub.model.dto.EditProductDTO;
-import com.unitbv.collectorshub.model.dto.ProductDTO;
-import com.unitbv.collectorshub.model.dto.RemoveProductDTO;
+import com.unitbv.collectorshub.model.dto.*;
+import com.unitbv.collectorshub.model.entities.Listing;
 import com.unitbv.collectorshub.model.entities.Product;
+import com.unitbv.collectorshub.repositories.ListingRepository;
 import com.unitbv.collectorshub.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
@@ -24,6 +22,7 @@ import java.util.Optional;
 public class ProductService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ProductRepository productRepository;
+    private final ListingRepository listingRepository;
 
     public ResponseEntity<AddProductDTO> addProduct(AddProductDTO addProductDTO) {
         Product product = Product.builder().name(addProductDTO.getProductName()).
@@ -85,12 +84,60 @@ public class ProductService {
         return new ResponseEntity<>(editProductDTO, HttpStatus.OK);
     }
 
-    public ResponseEntity<ProductDTO>  getProductById(Long id) {
+    public ResponseEntity<ProductDTO> getProductById(Long id) {
         Optional<Product> product = productRepository.findById(id);
         if(product.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(objectMapper.convertValue(product.get(), ProductDTO.class), HttpStatus.OK);
+    }
+
+    public ResponseEntity<AddListingDTO> addListing(AddListingDTO addListingDTO) {
+        Listing listing = Listing.builder().
+                productId(addListingDTO.getProductId()).
+                link(addListingDTO.getLink()).
+                contact(addListingDTO.getContact()).
+                isActive(addListingDTO.getIsActive()).
+                price(addListingDTO.getPrice()).
+                description(addListingDTO.getDescription()).
+                build();
+
+        if(listing.getProductId() == null) {
+            return new ResponseEntity<>(addListingDTO, HttpStatus.BAD_REQUEST);
+        }
+
+        listingRepository.save(listing);
+        return new ResponseEntity<>(addListingDTO, HttpStatus.OK);
+    }
+
+    public ResponseEntity<EditListingDTO> editListing(Long listingId, EditListingDTO editListingDTO) {
+        Optional<Listing> listing = listingRepository.findByListingId(listingId);
+        if(listing.isEmpty()) {
+            return new ResponseEntity<>(editListingDTO, HttpStatus.NOT_FOUND);
+        }
+        listing.get().setDescription(editListingDTO.getDescription());
+        listing.get().setContact(editListingDTO.getContact());
+        listing.get().setLink(editListingDTO.getLink());
+        listing.get().setIsActive(editListingDTO.getIsActive());
+        listing.get().setPrice(editListingDTO.getPrice());
+        listingRepository.save(listing.get());
+        return new ResponseEntity<>(editListingDTO, HttpStatus.OK);
+    }
+
+    public ResponseEntity<List<ListingDTO>> getAllListings() {
+        List<ListingDTO> listingDTOs = listingRepository.findAll().stream()
+                .map(listing -> ListingDTO.builder()
+                        .id(listing.getId())
+                        .productId(listing.getProductId())
+                        .link(listing.getLink())
+                        .contact(listing.getContact())
+                        .isActive(listing.getIsActive())
+                        .price(listing.getPrice())
+                        .description(listing.getDescription())
+                        .build())
+                .toList();
+
+        return ResponseEntity.ok(listingDTOs);
     }
 
 }

@@ -13,13 +13,14 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "listings_table")
+@Table(name = "listing_table")
 public class Listing {
     @Id
     @GeneratedValue
     private Long id;
-    private Long itemId;
+    private Long productId;
     private String link;
+    private String contact;
     private Boolean isActive;
     private BigDecimal price;
     private String description;

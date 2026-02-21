@@ -13,5 +13,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByCollection(String collection);
     Optional<Product> findByManufactureYear(Integer manufactureYear);
     Optional<Product> findByNameAndCollectionAndManufactureYear(String name, String collection, Integer manufactureYear);
-
+    Optional<Product> findByCategory(String category);
 }
