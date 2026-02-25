@@ -50,7 +50,7 @@ public class ProductController {
     }
 
     @PutMapping("/editListing")
-    public ResponseEntity<EditListingDTO> editListing(@RequestParam Long id ,@RequestBody EditListingDTO editListingDTO) {
+    public ResponseEntity<EditListingDTO> editListing(@RequestParam Long id, @RequestBody EditListingDTO editListingDTO) {
         return productService.editListing(id ,editListingDTO);
     }
 
