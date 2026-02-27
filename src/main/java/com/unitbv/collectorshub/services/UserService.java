@@ -2,6 +2,7 @@ package com.unitbv.collectorshub.services;
 
 import com.unitbv.collectorshub.exceptions.ApiException;
 import com.unitbv.collectorshub.model.dto.AddUserDTO;
+import com.unitbv.collectorshub.model.dto.GetUserDTO;
 import com.unitbv.collectorshub.model.dto.UserDTO;
 import com.unitbv.collectorshub.model.entities.User;
 import com.unitbv.collectorshub.repositories.UserRepository;
@@ -20,10 +21,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<UserDTO> getAllUsers() {
+    public List<GetUserDTO> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(user -> UserDTO.builder()
-                        .id(user.getId())
+                .map(user -> GetUserDTO.builder()
                         .email(user.getEmail())
                         .username(user.getUsername())
                         .build())

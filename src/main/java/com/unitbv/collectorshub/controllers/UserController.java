@@ -1,14 +1,11 @@
 package com.unitbv.collectorshub.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unitbv.collectorshub.model.dto.AddUserDTO;
-import com.unitbv.collectorshub.model.dto.UserDTO;
-import com.unitbv.collectorshub.services.ProductService;
+import com.unitbv.collectorshub.model.dto.GetUserDTO;
 import com.unitbv.collectorshub.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +17,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/getAllUsers")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
+    public ResponseEntity<List<GetUserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 

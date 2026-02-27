@@ -3,7 +3,6 @@ package com.unitbv.collectorshub.model.dto;
 import jakarta.annotation.Nullable;
 import lombok.*;
 
-import java.math.BigDecimal;
 
 @Getter
 @Setter

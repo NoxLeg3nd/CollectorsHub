@@ -1,8 +1,6 @@
 package com.unitbv.collectorshub.model.dto;
 
-import jakarta.persistence.Id;
 import lombok.*;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.math.BigDecimal;
 

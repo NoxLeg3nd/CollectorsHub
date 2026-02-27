@@ -57,8 +57,8 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    public EditProductDTO editProduct(String name, String collection, Integer manufactureYear, EditProductDTO editProductDTO) {
-        Product product = productRepository.findByNameAndCollectionAndManufactureYear(name,  collection, manufactureYear).orElseThrow(() -> new ApiException("Product not found", 404));
+    public EditProductDTO editProduct(Long id, EditProductDTO editProductDTO) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ApiException("Product not found", 404));
         if(editProductDTO.getNewProductName().isBlank() || editProductDTO.getNewProductCategory().isBlank()
                 || editProductDTO.getNewProductDescription().isBlank() || editProductDTO.getNewProductCollection().isBlank()) {
             throw new ApiException("Fields cannot be empty", 400);
@@ -136,5 +136,4 @@ public class ProductService {
                         .build())
                 .toList();
     }
-
 }

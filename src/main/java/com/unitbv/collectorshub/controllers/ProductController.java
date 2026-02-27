@@ -32,8 +32,8 @@ public class ProductController {
     }
 
     @PutMapping("/editProduct")
-    public ResponseEntity<EditProductDTO> editProduct(@RequestParam String name, @RequestParam String collection, @RequestParam Integer manufactureYear, @RequestBody EditProductDTO editProductDTO) {
-        return ResponseEntity.ok(productService.editProduct(name, collection, manufactureYear, editProductDTO));
+    public ResponseEntity<EditProductDTO> editProduct(@RequestParam Long id, @RequestBody EditProductDTO editProductDTO) {
+        return ResponseEntity.ok(productService.editProduct(id, editProductDTO));
     }
 
     @GetMapping("/getProductById")
