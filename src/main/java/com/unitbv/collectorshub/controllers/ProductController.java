@@ -1,6 +1,7 @@
 package com.unitbv.collectorshub.controllers;
 
 import com.unitbv.collectorshub.model.dto.*;
+import com.unitbv.collectorshub.services.ListingService;
 import com.unitbv.collectorshub.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final ListingService listingService;
 
     @PostMapping("/addProduct")
     public ResponseEntity<AddProductDTO> addProduct(@RequestBody AddProductDTO addProductDTO) {
@@ -43,16 +45,16 @@ public class ProductController {
 
     @PostMapping("/addListing")
     public ResponseEntity<AddListingDTO> addListing(@RequestBody AddListingDTO addListingDTO) {
-        return ResponseEntity.ok(productService.addListing(addListingDTO));
+        return ResponseEntity.ok(listingService.addListing(addListingDTO));
     }
 
     @PutMapping("/editListing")
     public ResponseEntity<EditListingDTO> editListing(@RequestParam Long id, @RequestBody EditListingDTO editListingDTO) {
-        return ResponseEntity.ok(productService.editListing(id, editListingDTO));
+        return ResponseEntity.ok(listingService.editListing(id, editListingDTO));
     }
 
     @GetMapping("/getAllListings")
     public ResponseEntity<List<ListingDTO>> getAllListings() {
-        return ResponseEntity.ok(productService.getAllListings());
+        return ResponseEntity.ok(listingService.getAllListings());
     }
 }

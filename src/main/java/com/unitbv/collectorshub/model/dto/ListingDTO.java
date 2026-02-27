@@ -14,7 +14,7 @@ public class ListingDTO {
     @Id
     private Long id;
     @NonNull
-    private Long productId;
+    private ProductDTO product;
     @NonNull
     private String link;
     @NonNull
