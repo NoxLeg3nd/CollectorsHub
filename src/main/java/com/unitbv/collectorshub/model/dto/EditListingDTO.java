@@ -10,15 +10,15 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class EditListingDTO {
     @NonNull
-    private Long productId;
+    private Long newProductId;
     @NonNull
-    private String link;
+    private String newLink;
     @NonNull
-    private String contact;
+    private String newContact;
     @NonNull
-    private Boolean isActive = true;
+    private Boolean newIsActive = true;
     @NonNull
-    private BigDecimal price;
+    private BigDecimal newPrice;
     @NonNull
-    private String description;
+    private String newDescription;
 }

@@ -8,8 +8,10 @@ import java.util.Optional;
 
 @Repository
 public interface ListingRepository extends JpaRepository<Listing, Long> {
-    Optional<Listing> findByListingId(Long ListingId);
+    Optional<Listing> findById(Long id);
     Optional<Listing> findByProductId(Long productId);
+    Optional<Listing> findByProductIdAndIsActive(Long productId, Boolean isActive);
     Optional<Listing> findByIsActive(Boolean isActive);
+    Optional<Listing> findByLink(String link);
 
 }
