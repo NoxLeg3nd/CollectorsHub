@@ -3,6 +3,7 @@ package com.unitbv.collectorshub.services;
 import com.unitbv.collectorshub.exceptions.ApiException;
 import com.unitbv.collectorshub.model.dto.AddUserDTO;
 import com.unitbv.collectorshub.model.dto.GetUserDTO;
+import com.unitbv.collectorshub.model.dto.LoginUserDTO;
 import com.unitbv.collectorshub.model.dto.UserDTO;
 import com.unitbv.collectorshub.model.entities.User;
 import com.unitbv.collectorshub.repositories.UserRepository;
@@ -58,5 +59,17 @@ public class UserService {
                 .orElseThrow(() -> new ApiException("User not found", 404));
 
         userRepository.delete(user);
+    }
+
+    public String loginUser(LoginUserDTO loginUserDTO) {
+        User user = userRepository.findByUsername(loginUserDTO.getUsername())
+                .orElseThrow(() -> new ApiException("User not found", 404));
+        if (!passwordEncoder.matches(loginUserDTO.getPassword(), user.getPassword())) {
+            throw new ApiException("Wrong password", 401);
+        }
+        return "Login successful for user with credentials:\n" +
+                " id: " + user.getId() +
+                "\nusername: " + user.getUsername() +
+                "\nemail: " + user.getEmail();
     }
 }

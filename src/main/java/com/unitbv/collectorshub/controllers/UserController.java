@@ -2,6 +2,7 @@ package com.unitbv.collectorshub.controllers;
 
 import com.unitbv.collectorshub.model.dto.AddUserDTO;
 import com.unitbv.collectorshub.model.dto.GetUserDTO;
+import com.unitbv.collectorshub.model.dto.LoginUserDTO;
 import com.unitbv.collectorshub.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,5 +30,9 @@ public class UserController {
     public ResponseEntity<Void>  removeUser(@RequestParam Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+    @PostMapping("/loginUser")
+    public ResponseEntity<String> loginUser(@RequestBody LoginUserDTO loginUserDTO) {
+        return ResponseEntity.ok(userService.loginUser(loginUserDTO));
     }
 }
