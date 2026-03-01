@@ -67,8 +67,8 @@ public class UserService {
         if (!passwordEncoder.matches(loginUserDTO.getPassword(), user.getPassword())) {
             throw new ApiException("Wrong password", 401);
         }
-        return "Login successful for user with credentials:\n" +
-                " id: " + user.getId() +
+        return "Login successful for user with credentials:" +
+                "\nid: " + user.getId() +
                 "\nusername: " + user.getUsername() +
                 "\nemail: " + user.getEmail();
     }
