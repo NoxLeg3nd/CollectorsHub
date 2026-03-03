@@ -8,6 +8,9 @@ import com.unitbv.collectorshub.repositories.ListingRepository;
 import com.unitbv.collectorshub.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,8 +40,9 @@ public class ProductService {
         return addProductDTO;
     }
 
-    public List<ProductDTO> getAllProducts() {
-        return productRepository.findAll().stream()
+    public Page<ProductDTO> getAllProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findAll(pageable)
                 .map(product -> ProductDTO.builder()
                         .id(product.getId())
                         .name(product.getName())
@@ -47,8 +51,7 @@ public class ProductService {
                         .collection(product.getCollection())
                         .manufactureYear(product.getManufactureYear())
                         .userId(product.getUserId())
-                        .build())
-                .toList();
+                        .build());
     }
 
     public void removeProduct(Long id) {

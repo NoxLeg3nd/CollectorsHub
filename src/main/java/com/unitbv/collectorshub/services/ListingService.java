@@ -7,6 +7,9 @@ import com.unitbv.collectorshub.repositories.ListingRepository;
 import com.unitbv.collectorshub.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -65,8 +68,9 @@ public class ListingService {
         return editListingDTO;
     }
 
-    public List<ListingDTO> getAllListings() {
-        return listingRepository.findAll().stream()
+    public Page<ListingDTO> getAllListings(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return listingRepository.findAll(pageable)
                 .map(listing -> {
                     ProductDTO product = productService.getProductById(listing.getProductId());
                     return ListingDTO.builder()
@@ -78,7 +82,6 @@ public class ListingService {
                             .price(listing.getPrice())
                             .description(listing.getDescription())
                             .build();
-                })
-                .toList();
+                });
     }
 }

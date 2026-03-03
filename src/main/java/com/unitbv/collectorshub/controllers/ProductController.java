@@ -4,6 +4,7 @@ import com.unitbv.collectorshub.model.dto.*;
 import com.unitbv.collectorshub.services.ListingService;
 import com.unitbv.collectorshub.services.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,8 @@ public class ProductController {
     }
 
     @GetMapping("/getAllProducts")
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    public ResponseEntity<Page<ProductDTO>> getAllProducts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(productService.getAllProducts(page, size));
     }
 
     @DeleteMapping("/removeProduct/{id}")
@@ -54,7 +55,7 @@ public class ProductController {
     }
 
     @GetMapping("/getAllListings")
-    public ResponseEntity<List<ListingDTO>> getAllListings() {
-        return ResponseEntity.ok(listingService.getAllListings());
+    public ResponseEntity<Page<ListingDTO>> getAllListings(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(listingService.getAllListings(page, size));
     }
 }
