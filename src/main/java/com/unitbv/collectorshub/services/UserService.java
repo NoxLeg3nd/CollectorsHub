@@ -61,15 +61,16 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public String loginUser(LoginUserDTO loginUserDTO) {
+    public GetUserDTO loginUser(LoginUserDTO loginUserDTO) {
         User user = userRepository.findByUsername(loginUserDTO.getUsername())
                 .orElseThrow(() -> new ApiException("User not found", 404));
         if (!passwordEncoder.matches(loginUserDTO.getPassword(), user.getPassword())) {
             throw new ApiException("Wrong password", 401);
         }
-        return "Login successful for user with credentials:" +
-                "\nid: " + user.getId() +
-                "\nusername: " + user.getUsername() +
-                "\nemail: " + user.getEmail();
+        return GetUserDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .build();
     }
 }

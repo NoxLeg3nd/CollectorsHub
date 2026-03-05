@@ -10,5 +10,6 @@ public class LoginUserDTO {
     private String username;
     @NonNull
     private String password;
+    private String email;
 
 }

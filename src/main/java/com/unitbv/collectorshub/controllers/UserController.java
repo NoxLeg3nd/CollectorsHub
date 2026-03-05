@@ -32,7 +32,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
     @PostMapping("/loginUser")
-    public ResponseEntity<String> loginUser(@RequestBody LoginUserDTO loginUserDTO) {
+    public ResponseEntity<GetUserDTO> loginUser(@RequestBody LoginUserDTO loginUserDTO) {
         return ResponseEntity.ok(userService.loginUser(loginUserDTO));
     }
 }
