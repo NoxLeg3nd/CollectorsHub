@@ -6,11 +6,9 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EditUserDTO {
+public class EditUserDetailsDTO {
     @NonNull
     private String newEmail;
     @NonNull
     private String newUsername;
-    @NonNull
-    private String newPassword;
 }

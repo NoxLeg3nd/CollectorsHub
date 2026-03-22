@@ -1,10 +1,7 @@
 package com.unitbv.collectorshub.services;
 
 import com.unitbv.collectorshub.exceptions.ApiException;
-import com.unitbv.collectorshub.model.dto.AddUserDTO;
-import com.unitbv.collectorshub.model.dto.GetUserDTO;
-import com.unitbv.collectorshub.model.dto.LoginUserDTO;
-import com.unitbv.collectorshub.model.dto.UserDTO;
+import com.unitbv.collectorshub.model.dto.*;
 import com.unitbv.collectorshub.model.entities.User;
 import com.unitbv.collectorshub.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -72,5 +69,33 @@ public class UserService {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .build();
+    }
+
+    public EditUserDetailsDTO editUserDetails(Long id, EditUserDetailsDTO editUserDetailsDTO) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ApiException("User not found", 404));
+        if(editUserDetailsDTO.getNewEmail().isBlank() || editUserDetailsDTO.getNewUsername().isBlank()) {
+            throw new ApiException("Email or Username cannot be empty", 400);
+        }
+        user.setEmail(editUserDetailsDTO.getNewEmail());
+        user.setUsername(editUserDetailsDTO.getNewUsername());
+        userRepository.save(user);
+        return editUserDetailsDTO;
+    }
+
+    public EditUserPasswordDTO editUserPassword(Long id, EditUserPasswordDTO editUserPasswordDTO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ApiException("User not found", 404));
+
+        if (editUserPasswordDTO.getCurrentPassword().isBlank() || editUserPasswordDTO.getNewPassword().isBlank()) {
+            throw new ApiException("Password cannot be empty", 400);
+        }
+
+        if (!passwordEncoder.matches(editUserPasswordDTO.getCurrentPassword(), user.getPassword())) {
+            throw new ApiException("Current password is incorrect", 401);
+        }
+
+        user.setPassword(passwordEncoder.encode(editUserPasswordDTO.getNewPassword()));
+        userRepository.save(user);
+        return editUserPasswordDTO;
     }
 }

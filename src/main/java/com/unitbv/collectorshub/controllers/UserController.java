@@ -1,8 +1,6 @@
 package com.unitbv.collectorshub.controllers;
 
-import com.unitbv.collectorshub.model.dto.AddUserDTO;
-import com.unitbv.collectorshub.model.dto.GetUserDTO;
-import com.unitbv.collectorshub.model.dto.LoginUserDTO;
+import com.unitbv.collectorshub.model.dto.*;
 import com.unitbv.collectorshub.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,5 +32,15 @@ public class UserController {
     @PostMapping("/loginUser")
     public ResponseEntity<GetUserDTO> loginUser(@RequestBody LoginUserDTO loginUserDTO) {
         return ResponseEntity.ok(userService.loginUser(loginUserDTO));
+    }
+
+    @PutMapping("/editUserDetails")
+    public ResponseEntity<EditUserDetailsDTO> editUserDetails(@RequestParam Long id, @RequestBody EditUserDetailsDTO editUserDetailsDTO) {
+        return ResponseEntity.ok(userService.editUserDetails(id, editUserDetailsDTO));
+    }
+
+    @PutMapping("/editUserPassword")
+    public ResponseEntity<EditUserPasswordDTO> editUserPassword(@RequestParam Long id, @RequestBody EditUserPasswordDTO editUserPasswordDTO) {
+        return ResponseEntity.ok(userService.editUserPassword(id, editUserPasswordDTO));
     }
 }
