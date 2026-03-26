@@ -44,6 +44,16 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
+    @GetMapping("/getProductByUserId")
+    public ResponseEntity<ProductDTO> getProductByUserId(@RequestParam Long userId) {
+        return ResponseEntity.ok(productService.getProductByUserId(userId));
+    }
+
+    @GetMapping("/getAllProductsByUserId")
+    public ResponseEntity<Page<ProductDTO>> getAllProductsByUserId(@RequestParam Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(productService.getAllProductsByUserId(userId, page, size));
+    }
+
     @PostMapping("/addListing")
     public ResponseEntity<AddListingDTO> addListing(@RequestBody AddListingDTO addListingDTO) {
         return ResponseEntity.ok(listingService.addListing(addListingDTO));
@@ -57,5 +67,10 @@ public class ProductController {
     @GetMapping("/getAllListings")
     public ResponseEntity<Page<ListingDTO>> getAllListings(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(listingService.getAllListings(page, size));
+    }
+
+    @GetMapping("/getAllListingsByUserId")
+    public ResponseEntity<Page<ListingDTO>> getAllListingsByUserId(@RequestParam Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(listingService.getAllListingsByUserId(userId, page, size));
     }
 }

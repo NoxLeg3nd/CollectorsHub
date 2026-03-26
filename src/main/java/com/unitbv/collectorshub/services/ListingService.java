@@ -84,4 +84,21 @@ public class ListingService {
                             .build();
                 });
     }
+
+    public Page<ListingDTO> getAllListingsByUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return listingRepository.findAll(pageable)
+                .map(listing -> {
+                    ProductDTO product = productService.getProductByUserId(userId);
+                    return ListingDTO.builder()
+                            .id(listing.getId())
+                            .product(product)
+                            .link(listing.getLink())
+                            .contact(listing.getContact())
+                            .isActive(listing.getIsActive())
+                            .price(listing.getPrice())
+                            .description(listing.getDescription())
+                            .build();
+                });
+    }
 }

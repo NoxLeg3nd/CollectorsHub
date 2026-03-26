@@ -2,7 +2,6 @@ package com.unitbv.collectorshub.services;
 
 import com.unitbv.collectorshub.exceptions.ApiException;
 import com.unitbv.collectorshub.model.dto.*;
-import com.unitbv.collectorshub.model.entities.Listing;
 import com.unitbv.collectorshub.model.entities.Product;
 import com.unitbv.collectorshub.repositories.ListingRepository;
 import com.unitbv.collectorshub.repositories.ProductRepository;
@@ -54,6 +53,20 @@ public class ProductService {
                         .build());
     }
 
+    public Page<ProductDTO> getAllProductsByUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findAll(pageable)
+                .map(product -> ProductDTO.builder()
+                        .id(product.getId())
+                        .name(product.getName())
+                        .description(product.getDescription())
+                        .category(product.getCategory())
+                        .collection(product.getCollection())
+                        .manufactureYear(product.getManufactureYear())
+                        .userId(product.getUserId())
+                        .build());
+    }
+
     public void removeProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ApiException("Product not found", 404));
@@ -88,4 +101,18 @@ public class ProductService {
                 .userId(product.getUserId()).
                 build();
     }
+    public ProductDTO getProductByUserId(Long userId) {
+        Product product = productRepository.findByUserId(userId).orElseThrow(() -> new ApiException("Product not found with provided userId", 404));
+        return ProductDTO.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .category(product.getCategory())
+                .collection(product.getCollection())
+                .manufactureYear(product.getManufactureYear())
+                .image(product.getImage())
+                .description(product.getDescription())
+                .userId(product.getUserId()).
+                build();
+    }
+
 }
