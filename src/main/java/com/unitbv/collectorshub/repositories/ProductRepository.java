@@ -1,6 +1,8 @@
 package com.unitbv.collectorshub.repositories;
 
 import com.unitbv.collectorshub.model.entities.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +17,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByNameAndCollectionAndManufactureYear(String name, String collection, Integer manufactureYear);
     Optional<Product> findByCategory(String category);
     Optional<Product> findByUserId(Long userId);
+    Page<Product> findAllByUserId(Long userId, Pageable pageable);
 }

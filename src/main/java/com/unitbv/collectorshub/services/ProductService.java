@@ -55,7 +55,7 @@ public class ProductService {
 
     public Page<ProductDTO> getAllProductsByUserId(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return productRepository.findAll(pageable)
+        return productRepository.findAllByUserId(userId, pageable)
                 .map(product -> ProductDTO.builder()
                         .id(product.getId())
                         .name(product.getName())
@@ -63,6 +63,7 @@ public class ProductService {
                         .category(product.getCategory())
                         .collection(product.getCollection())
                         .manufactureYear(product.getManufactureYear())
+                        .image(product.getImage())
                         .userId(product.getUserId())
                         .build());
     }
@@ -114,5 +115,4 @@ public class ProductService {
                 .userId(product.getUserId()).
                 build();
     }
-
 }

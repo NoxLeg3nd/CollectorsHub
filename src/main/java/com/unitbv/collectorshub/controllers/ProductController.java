@@ -28,8 +28,8 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts(page, size));
     }
 
-    @DeleteMapping("/removeProduct/{id}")
-    public ResponseEntity<Void> removeProduct(@PathVariable Long id) {
+    @DeleteMapping("/removeProduct")
+    public ResponseEntity<Void> removeProduct(@RequestParam Long id) {
         productService.removeProduct(id);
         return ResponseEntity.noContent().build();
     }
@@ -73,4 +73,6 @@ public class ProductController {
     public ResponseEntity<Page<ListingDTO>> getAllListingsByUserId(@RequestParam Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(listingService.getAllListingsByUserId(userId, page, size));
     }
+
+    
 }
