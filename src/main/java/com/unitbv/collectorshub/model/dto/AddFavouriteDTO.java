@@ -1,16 +1,15 @@
 package com.unitbv.collectorshub.model.dto;
 
 import lombok.*;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginUserDTO {
-    @NonNull
-    private String username;
-    @NonNull
-    private String password;
-    @NonNull
-    private String email;
 
+public class AddFavouriteDTO {
+    @NonNull
+    private Long userId;
+    @NonNull
+    private Long listingId;
 }

@@ -1,14 +1,13 @@
 package com.unitbv.collectorshub.controllers;
 
 import com.unitbv.collectorshub.model.dto.*;
+import com.unitbv.collectorshub.services.FavouritesService;
 import com.unitbv.collectorshub.services.ListingService;
 import com.unitbv.collectorshub.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -17,10 +16,11 @@ public class ProductController {
 
     private final ProductService productService;
     private final ListingService listingService;
+    private final FavouritesService favouritesService;
 
     @PostMapping("/addProduct")
     public ResponseEntity<AddProductDTO> addProduct(@RequestBody AddProductDTO addProductDTO) {
-        return  ResponseEntity.ok(productService.addProduct(addProductDTO));
+        return ResponseEntity.ok(productService.addProduct(addProductDTO));
     }
 
     @GetMapping("/getAllProducts")
@@ -74,5 +74,19 @@ public class ProductController {
         return ResponseEntity.ok(listingService.getAllListingsByUserId(userId, page, size));
     }
 
-    
+    @PostMapping("/addFavourite")
+    public ResponseEntity<AddFavouriteDTO> addFavourite(@RequestBody AddFavouriteDTO addFavouriteDTO) {
+        return ResponseEntity.ok(favouritesService.addFavourite(addFavouriteDTO));
+    }
+
+    @GetMapping("/getAllFavouritesByUserId")
+    public ResponseEntity<Page<FavouriteDTO>> getAllFavouritesByUserId(@RequestParam Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(favouritesService.getAllFavouritesByUserId(userId, page, size));
+    }
+
+    @DeleteMapping("/removeFavourite")
+    public ResponseEntity<Void> removeFavourite(@RequestParam Long id) {
+        favouritesService.removeFavourite(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -8,19 +8,17 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "product_table")
-public class Product {
+@Table(name = "favourites_table")
+public class Favourites {
     @Id
     @GeneratedValue
     private Long id;
-    private String name;
-    private String category;
-    private String collection;
-    private Integer manufactureYear;
-    private String image;
-    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "listing_id", nullable = false)
+    private Listing listing;
 }

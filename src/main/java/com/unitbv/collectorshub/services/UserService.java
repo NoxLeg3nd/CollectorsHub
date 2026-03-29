@@ -19,9 +19,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<GetUserDTO> getAllUsers() {
+    public List getAllUsers() {
         return userRepository.findAll().stream()
                 .map(user -> GetUserDTO.builder()
+                        .id(user.getId())
                         .email(user.getEmail())
                         .username(user.getUsername())
                         .build())
@@ -29,7 +30,6 @@ public class UserService {
     }
 
     public AddUserDTO addUser(AddUserDTO addUserDTO) {
-
         if (addUserDTO.getEmail().isBlank() ||
                 addUserDTO.getUsername().isBlank() ||
                 addUserDTO.getPassword().isBlank()) {
@@ -54,7 +54,6 @@ public class UserService {
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ApiException("User not found", 404));
-
         userRepository.delete(user);
     }
 
@@ -72,8 +71,9 @@ public class UserService {
     }
 
     public EditUserDetailsDTO editUserDetails(Long id, EditUserDetailsDTO editUserDetailsDTO) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ApiException("User not found", 404));
-        if(editUserDetailsDTO.getNewEmail().isBlank() || editUserDetailsDTO.getNewUsername().isBlank()) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ApiException("User not found", 404));
+        if (editUserDetailsDTO.getNewEmail().isBlank() || editUserDetailsDTO.getNewUsername().isBlank()) {
             throw new ApiException("Email or Username cannot be empty", 400);
         }
         user.setEmail(editUserDetailsDTO.getNewEmail());

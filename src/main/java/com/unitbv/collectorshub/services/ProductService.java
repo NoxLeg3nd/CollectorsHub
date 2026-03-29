@@ -3,8 +3,9 @@ package com.unitbv.collectorshub.services;
 import com.unitbv.collectorshub.exceptions.ApiException;
 import com.unitbv.collectorshub.model.dto.*;
 import com.unitbv.collectorshub.model.entities.Product;
-import com.unitbv.collectorshub.repositories.ListingRepository;
+import com.unitbv.collectorshub.model.entities.User;
 import com.unitbv.collectorshub.repositories.ProductRepository;
+import com.unitbv.collectorshub.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -12,24 +13,28 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-
 @RequiredArgsConstructor
 @Service
 @Log4j2
-
 public class ProductService {
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     public AddProductDTO addProduct(AddProductDTO addProductDTO) {
-        Product product = Product.builder().name(addProductDTO.getProductName()).
-                description(addProductDTO.getProductDescription()).
-                collection(addProductDTO.getProductCollection()).
-                category(addProductDTO.getProductCategory()).
-                manufactureYear(addProductDTO.getManufactureYear()).
-                userId(addProductDTO.getUserId()).
-                image(addProductDTO.getProductImage()).
-                build();
-        if(product.getName().isBlank() || product.getCategory().isBlank()
+        User user = userRepository.findById(addProductDTO.getUserId())
+                .orElseThrow(() -> new ApiException("User not found", 404));
+
+        Product product = Product.builder()
+                .name(addProductDTO.getProductName())
+                .description(addProductDTO.getProductDescription())
+                .collection(addProductDTO.getProductCollection())
+                .category(addProductDTO.getProductCategory())
+                .manufactureYear(addProductDTO.getManufactureYear())
+                .user(user)
+                .image(addProductDTO.getProductImage())
+                .build();
+
+        if (product.getName().isBlank() || product.getCategory().isBlank()
                 || product.getCollection().isBlank() || product.getDescription().isBlank()) {
             throw new ApiException("Product details cannot be empty", 400);
         }
@@ -38,7 +43,7 @@ public class ProductService {
         return addProductDTO;
     }
 
-    public Page<ProductDTO> getAllProducts(int page, int size) {
+    public Page getAllProducts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findAll(pageable)
                 .map(product -> ProductDTO.builder()
@@ -48,13 +53,13 @@ public class ProductService {
                         .category(product.getCategory())
                         .collection(product.getCollection())
                         .manufactureYear(product.getManufactureYear())
-                        .userId(product.getUserId())
+                        .userId(product.getUser().getId())
                         .build());
     }
 
-    public Page<ProductDTO> getAllProductsByUserId(Long userId, int page, int size) {
+    public Page getAllProductsByUserId(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return productRepository.findAllByUserId(userId, pageable)
+        return productRepository.findAllByUser_Id(userId, pageable)
                 .map(product -> ProductDTO.builder()
                         .id(product.getId())
                         .name(product.getName())
@@ -63,7 +68,7 @@ public class ProductService {
                         .collection(product.getCollection())
                         .manufactureYear(product.getManufactureYear())
                         .image(product.getImage())
-                        .userId(product.getUserId())
+                        .userId(product.getUser().getId())
                         .build());
     }
 
@@ -74,11 +79,14 @@ public class ProductService {
     }
 
     public EditProductDTO editProduct(Long id, EditProductDTO editProductDTO) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new ApiException("Product not found", 404));
-        if(editProductDTO.getNewProductName().isBlank() || editProductDTO.getNewProductCategory().isBlank()
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ApiException("Product not found", 404));
+
+        if (editProductDTO.getNewProductName().isBlank() || editProductDTO.getNewProductCategory().isBlank()
                 || editProductDTO.getNewProductDescription().isBlank() || editProductDTO.getNewProductCollection().isBlank()) {
             throw new ApiException("Fields cannot be empty", 400);
         }
+
         product.setName(editProductDTO.getNewProductName());
         product.setDescription(editProductDTO.getNewProductDescription());
         product.setCategory(editProductDTO.getNewProductCategory());
@@ -89,7 +97,8 @@ public class ProductService {
     }
 
     public ProductDTO getProductById(Long id) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new ApiException("Product not found", 404));
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ApiException("Product not found", 404));
         return ProductDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -98,11 +107,13 @@ public class ProductService {
                 .manufactureYear(product.getManufactureYear())
                 .image(product.getImage())
                 .description(product.getDescription())
-                .userId(product.getUserId()).
-                build();
+                .userId(product.getUser().getId())
+                .build();
     }
+
     public ProductDTO getProductByUserId(Long userId) {
-        Product product = productRepository.findByUserId(userId).orElseThrow(() -> new ApiException("Product not found with provided userId", 404));
+        Product product = productRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new ApiException("Product not found with provided userId", 404));
         return ProductDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -111,7 +122,7 @@ public class ProductService {
                 .manufactureYear(product.getManufactureYear())
                 .image(product.getImage())
                 .description(product.getDescription())
-                .userId(product.getUserId()).
-                build();
+                .userId(product.getUser().getId())
+                .build();
     }
 }

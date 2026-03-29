@@ -3,6 +3,7 @@ package com.unitbv.collectorshub.services;
 import com.unitbv.collectorshub.exceptions.ApiException;
 import com.unitbv.collectorshub.model.dto.*;
 import com.unitbv.collectorshub.model.entities.Listing;
+import com.unitbv.collectorshub.model.entities.Product;
 import com.unitbv.collectorshub.repositories.ListingRepository;
 import com.unitbv.collectorshub.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +29,11 @@ public class ListingService {
             throw new ApiException("Fields cannot be empty", 400);
         }
 
-        if(productRepository.findById(addListingDTO.getProductId()).isEmpty()) {
-            throw new ApiException("Product not found in database", 404);
-        }
+        Product product = productRepository.findById(addListingDTO.getProductId())
+                .orElseThrow(() -> new ApiException("Product not found in database", 404));
 
         Listing listing = Listing.builder()
-                .productId(addListingDTO.getProductId())
+                .product(product)
                 .link(addListingDTO.getLink())
                 .contact(addListingDTO.getContact())
                 .isActive(addListingDTO.getIsActive())
@@ -53,26 +53,25 @@ public class ListingService {
             throw new ApiException("Fields cannot be empty", 400);
         }
 
-        if(productRepository.findById(editListingDTO.getNewProductId()).isEmpty()) {
-            throw new ApiException("Product not found in database", 404);
-        }
+        Product product = productRepository.findById(editListingDTO.getNewProductId())
+                .orElseThrow(() -> new ApiException("Product not found in database", 404));
 
         listing.setDescription(editListingDTO.getNewDescription());
         listing.setContact(editListingDTO.getNewContact());
         listing.setLink(editListingDTO.getNewLink());
         listing.setPrice(editListingDTO.getNewPrice());
         listing.setIsActive(editListingDTO.getNewIsActive());
-        listing.setProductId(editListingDTO.getNewProductId());
+        listing.setProduct(product);
 
         listingRepository.save(listing);
         return editListingDTO;
     }
 
-    public Page<ListingDTO> getAllListings(int page, int size) {
+    public Page getAllListings(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return listingRepository.findAll(pageable)
                 .map(listing -> {
-                    ProductDTO product = productService.getProductById(listing.getProductId());
+                    ProductDTO product = productService.getProductById(listing.getProduct().getId());
                     return ListingDTO.builder()
                             .id(listing.getId())
                             .product(product)
@@ -85,11 +84,11 @@ public class ListingService {
                 });
     }
 
-    public Page<ListingDTO> getAllListingsByUserId(Long userId, int page, int size) {
+    public Page getAllListingsByUserId(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return listingRepository.findAll(pageable)
+        return listingRepository.findAllByProduct_User_Id(userId, pageable)
                 .map(listing -> {
-                    ProductDTO product = productService.getProductByUserId(userId);
+                    ProductDTO product = productService.getProductById(listing.getProduct().getId());
                     return ListingDTO.builder()
                             .id(listing.getId())
                             .product(product)
@@ -100,5 +99,20 @@ public class ListingService {
                             .description(listing.getDescription())
                             .build();
                 });
+    }
+
+    public ListingDTO getListingById(Long id) {
+        Listing listing = listingRepository.findById(id)
+                .orElseThrow(() -> new ApiException("Listing not found", 404));
+        ProductDTO product = productService.getProductById(listing.getProduct().getId());
+        return ListingDTO.builder()
+                .id(listing.getId())
+                .product(product)
+                .link(listing.getLink())
+                .contact(listing.getContact())
+                .isActive(listing.getIsActive())
+                .price(listing.getPrice())
+                .description(listing.getDescription())
+                .build();
     }
 }

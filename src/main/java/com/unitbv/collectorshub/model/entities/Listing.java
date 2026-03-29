@@ -1,11 +1,7 @@
 package com.unitbv.collectorshub.model.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.math.BigDecimal;
 
 @Data
@@ -18,11 +14,13 @@ public class Listing {
     @Id
     @GeneratedValue
     private Long id;
-    private Long productId;
     private String link;
     private String contact;
     private Boolean isActive;
     private BigDecimal price;
     private String description;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 }
