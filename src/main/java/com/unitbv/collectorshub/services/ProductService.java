@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -20,7 +19,6 @@ import java.util.List;
 
 public class ProductService {
     private final ProductRepository productRepository;
-    private final ListingRepository listingRepository;
 
     public AddProductDTO addProduct(AddProductDTO addProductDTO) {
         Product product = Product.builder().name(addProductDTO.getProductName()).
@@ -29,6 +27,7 @@ public class ProductService {
                 category(addProductDTO.getProductCategory()).
                 manufactureYear(addProductDTO.getManufactureYear()).
                 userId(addProductDTO.getUserId()).
+                image(addProductDTO.getProductImage()).
                 build();
         if(product.getName().isBlank() || product.getCategory().isBlank()
                 || product.getCollection().isBlank() || product.getDescription().isBlank()) {
