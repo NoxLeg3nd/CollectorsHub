@@ -4,8 +4,10 @@ import com.unitbv.collectorshub.exceptions.ApiException;
 import com.unitbv.collectorshub.model.dto.*;
 import com.unitbv.collectorshub.model.entities.Listing;
 import com.unitbv.collectorshub.model.entities.Product;
+import com.unitbv.collectorshub.model.entities.User;
 import com.unitbv.collectorshub.repositories.ListingRepository;
 import com.unitbv.collectorshub.repositories.ProductRepository;
+import com.unitbv.collectorshub.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -13,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -23,6 +24,7 @@ public class ListingService {
     private final ListingRepository listingRepository;
     private final ProductRepository productRepository;
     private final ProductService productService;
+    private final UserRepository userRepository;
 
     public AddListingDTO addListing(AddListingDTO addListingDTO) {
         if (addListingDTO.getLink().isBlank() || addListingDTO.getContact().isBlank()) {
@@ -32,13 +34,17 @@ public class ListingService {
         Product product = productRepository.findById(addListingDTO.getProductId())
                 .orElseThrow(() -> new ApiException("Product not found in database", 404));
 
+        User user = userRepository.findById(addListingDTO.getUserId())
+                .orElseThrow(() -> new ApiException("User not found", 404));
+
         Listing listing = Listing.builder()
-                .product(product)
                 .link(addListingDTO.getLink())
                 .contact(addListingDTO.getContact())
                 .isActive(addListingDTO.getIsActive())
                 .price(addListingDTO.getPrice())
                 .description(addListingDTO.getDescription())
+                .product(product)
+                .user(user)
                 .build();
 
         listingRepository.save(listing);
@@ -70,49 +76,79 @@ public class ListingService {
     public Page getAllListings(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return listingRepository.findAll(pageable)
-                .map(listing -> {
-                    ProductDTO product = productService.getProductById(listing.getProduct().getId());
-                    return ListingDTO.builder()
-                            .id(listing.getId())
-                            .product(product)
-                            .link(listing.getLink())
-                            .contact(listing.getContact())
-                            .isActive(listing.getIsActive())
-                            .price(listing.getPrice())
-                            .description(listing.getDescription())
-                            .build();
-                });
+                .map(listing -> ListingDTO.builder()
+                        .id(listing.getId())
+                        .link(listing.getLink())
+                        .contact(listing.getContact())
+                        .isActive(listing.getIsActive())
+                        .price(listing.getPrice())
+                        .description(listing.getDescription())
+                        .product(ProductDTO.builder()
+                                .id(listing.getProduct().getId())
+                                .name(listing.getProduct().getName())
+                                .category(listing.getProduct().getCategory())
+                                .collection(listing.getProduct().getCollection())
+                                .image(listing.getProduct().getImage())
+                                .manufactureYear(listing.getProduct().getManufactureYear())
+                                .description(listing.getProduct().getDescription())
+                                .userId(listing.getProduct().getUser().getId())
+                                .build())
+                        .userId(listing.getUser().getId())
+                        .build());
     }
 
     public Page getAllListingsByUserId(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return listingRepository.findAllByProduct_User_Id(userId, pageable)
-                .map(listing -> {
-                    ProductDTO product = productService.getProductById(listing.getProduct().getId());
-                    return ListingDTO.builder()
-                            .id(listing.getId())
-                            .product(product)
-                            .link(listing.getLink())
-                            .contact(listing.getContact())
-                            .isActive(listing.getIsActive())
-                            .price(listing.getPrice())
-                            .description(listing.getDescription())
-                            .build();
-                });
+        return listingRepository.findAllByUserId(userId, pageable)
+                .map(listing -> ListingDTO.builder()
+                        .id(listing.getId())
+                        .link(listing.getLink())
+                        .contact(listing.getContact())
+                        .isActive(listing.getIsActive())
+                        .price(listing.getPrice())
+                        .description(listing.getDescription())
+                        .product(ProductDTO.builder()
+                                .id(listing.getProduct().getId())
+                                .name(listing.getProduct().getName())
+                                .category(listing.getProduct().getCategory())
+                                .collection(listing.getProduct().getCollection())
+                                .image(listing.getProduct().getImage())
+                                .manufactureYear(listing.getProduct().getManufactureYear())
+                                .description(listing.getProduct().getDescription())
+                                .userId(listing.getProduct().getUser().getId())
+                                .build())
+                        .userId(listing.getUser().getId())
+                        .build());
     }
 
     public ListingDTO getListingById(Long id) {
         Listing listing = listingRepository.findById(id)
                 .orElseThrow(() -> new ApiException("Listing not found", 404));
-        ProductDTO product = productService.getProductById(listing.getProduct().getId());
         return ListingDTO.builder()
                 .id(listing.getId())
-                .product(product)
+                .product(ProductDTO.builder()
+                        .id(listing.getProduct().getId())
+                        .name(listing.getProduct().getName())
+                        .category(listing.getProduct().getCategory())
+                        .collection(listing.getProduct().getCollection())
+                        .image(listing.getProduct().getImage())
+                        .manufactureYear(listing.getProduct().getManufactureYear())
+                        .description(listing.getProduct().getDescription())
+                        .userId(listing.getProduct().getUser().getId())
+                        .build())
                 .link(listing.getLink())
                 .contact(listing.getContact())
                 .isActive(listing.getIsActive())
                 .price(listing.getPrice())
                 .description(listing.getDescription())
+                .userId(listing.getUser().getId())
+                .username(listing.getUser().getUsername())
                 .build();
+    }
+
+    public void removeListing(Long id) {
+        Listing listing = listingRepository.findById(id)
+                .orElseThrow(() -> new ApiException("Listing not found", 404));
+        listingRepository.delete(listing);
     }
 }

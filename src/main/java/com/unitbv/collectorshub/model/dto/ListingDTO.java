@@ -23,7 +23,8 @@ public class ListingDTO {
     private Boolean isActive = true;
     @NonNull
     private BigDecimal price;
-    @NonNull
     private String description;
-
+    @NonNull
+    private Long userId;
+    private String username;
 }

@@ -1,15 +1,14 @@
 package com.unitbv.collectorshub.repositories;
 
 import com.unitbv.collectorshub.model.entities.Listing;
+import com.unitbv.collectorshub.model.entities.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
-public interface ListingRepository extends JpaRepository<Listing, Long> {
-    Optional<Listing> findById(Long id);
-    Page<Listing> findAllByUserId(Long userId, Pageable pageable);
+public interface ReviewRepository extends JpaRepository<Review, Long> {
+    Optional<Review> findById(Long id);
+    Optional<Review> findReviewByReviewedUser_IdAndReviewingUser_Id(Long reviewedUserId, Long reviewingUserId);
 }

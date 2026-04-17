@@ -74,6 +74,17 @@ public class ProductController {
         return ResponseEntity.ok(listingService.getAllListingsByUserId(userId, page, size));
     }
 
+    @GetMapping("/getListingById")
+    public ResponseEntity<ListingDTO> getListingById(@RequestParam Long id) {
+        return ResponseEntity.ok(listingService.getListingById(id));
+    }
+
+    @DeleteMapping("/removeListing")
+    public ResponseEntity<Void> removeListing(@RequestParam Long id) {
+        listingService.removeListing(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/addFavourite")
     public ResponseEntity<AddFavouriteDTO> addFavourite(@RequestBody AddFavouriteDTO addFavouriteDTO) {
         return ResponseEntity.ok(favouritesService.addFavourite(addFavouriteDTO));
