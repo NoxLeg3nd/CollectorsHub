@@ -2,8 +2,12 @@ package com.unitbv.collectorshub.services;
 
 import com.unitbv.collectorshub.exceptions.ApiException;
 import com.unitbv.collectorshub.model.dto.*;
+import com.unitbv.collectorshub.model.entities.Favourites;
+import com.unitbv.collectorshub.model.entities.Listing;
 import com.unitbv.collectorshub.model.entities.Product;
 import com.unitbv.collectorshub.model.entities.User;
+import com.unitbv.collectorshub.repositories.FavouritesRepository;
+import com.unitbv.collectorshub.repositories.ListingRepository;
 import com.unitbv.collectorshub.repositories.ProductRepository;
 import com.unitbv.collectorshub.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +17,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 @Log4j2
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ListingRepository listingRepository;
+    private final FavouritesRepository  favouritesRepository;
     private final UserRepository userRepository;
 
     public AddProductDTO addProduct(AddProductDTO addProductDTO) {
@@ -75,6 +83,12 @@ public class ProductService {
     public void removeProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ApiException("Product not found", 404));
+
+        List<Listing> listings = listingRepository.findAllByProduct_Id(id);
+        for (Listing listing : listings) {
+            favouritesRepository.deleteAll(favouritesRepository.findAllByListing_Id(listing.getId()));
+        }
+        listingRepository.deleteAll(listings);
         productRepository.delete(product);
     }
 
@@ -124,5 +138,19 @@ public class ProductService {
                 .description(product.getDescription())
                 .userId(product.getUser().getId())
                 .build();
+    }
+    public Page searchProductsByUserId(Long userId, String query, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.searchByUserId(userId, query, pageable)
+                .map(product -> ProductDTO.builder()
+                        .id(product.getId())
+                        .name(product.getName())
+                        .description(product.getDescription())
+                        .category(product.getCategory())
+                        .collection(product.getCollection())
+                        .manufactureYear(product.getManufactureYear())
+                        .image(product.getImage())
+                        .userId(product.getUser().getId())
+                        .build());
     }
 }

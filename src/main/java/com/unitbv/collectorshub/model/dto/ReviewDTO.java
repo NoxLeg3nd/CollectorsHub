@@ -15,6 +15,7 @@ public class ReviewDTO {
     private Long reviewedUserId;
     @NonNull
     private Long reviewingUserId;
+    private String reviewingUsername;
     @NonNull
     private String comment;
     @NonNull

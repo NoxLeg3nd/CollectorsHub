@@ -2,9 +2,11 @@ package com.unitbv.collectorshub.services;
 
 import com.unitbv.collectorshub.exceptions.ApiException;
 import com.unitbv.collectorshub.model.dto.*;
+import com.unitbv.collectorshub.model.entities.Favourites;
 import com.unitbv.collectorshub.model.entities.Listing;
 import com.unitbv.collectorshub.model.entities.Product;
 import com.unitbv.collectorshub.model.entities.User;
+import com.unitbv.collectorshub.repositories.FavouritesRepository;
 import com.unitbv.collectorshub.repositories.ListingRepository;
 import com.unitbv.collectorshub.repositories.ProductRepository;
 import com.unitbv.collectorshub.repositories.UserRepository;
@@ -23,6 +25,7 @@ public class ListingService {
 
     private final ListingRepository listingRepository;
     private final ProductRepository productRepository;
+    private final FavouritesRepository favouritesRepository;
     private final ProductService productService;
     private final UserRepository userRepository;
 
@@ -145,10 +148,34 @@ public class ListingService {
                 .username(listing.getUser().getUsername())
                 .build();
     }
-
     public void removeListing(Long id) {
         Listing listing = listingRepository.findById(id)
                 .orElseThrow(() -> new ApiException("Listing not found", 404));
+        favouritesRepository.deleteAll(favouritesRepository.findAllByListing_Id(id));
         listingRepository.delete(listing);
+    }
+    public Page searchListings(String query, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return listingRepository.searchAll(query, pageable)
+                .map(listing -> ListingDTO.builder()
+                        .id(listing.getId())
+                        .link(listing.getLink())
+                        .contact(listing.getContact())
+                        .isActive(listing.getIsActive())
+                        .price(listing.getPrice())
+                        .description(listing.getDescription())
+                        .product(ProductDTO.builder()
+                                .id(listing.getProduct().getId())
+                                .name(listing.getProduct().getName())
+                                .category(listing.getProduct().getCategory())
+                                .collection(listing.getProduct().getCollection())
+                                .image(listing.getProduct().getImage())
+                                .manufactureYear(listing.getProduct().getManufactureYear())
+                                .description(listing.getProduct().getDescription())
+                                .userId(listing.getProduct().getUser().getId())
+                                .build())
+                        .userId(listing.getUser().getId())
+                        .username(listing.getUser().getUsername())
+                        .build());
     }
 }

@@ -100,4 +100,19 @@ public class ProductController {
         favouritesService.removeFavourite(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/searchProducts")
+    public ResponseEntity<Page<ProductDTO>> searchProducts(
+            @RequestParam Long userId,
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(productService.searchProductsByUserId(userId, query, page, size));
+    }
+    @GetMapping("/searchListings")
+    public ResponseEntity<Page<ListingDTO>> searchListings(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(listingService.searchListings(query, page, size));
+    }
 }

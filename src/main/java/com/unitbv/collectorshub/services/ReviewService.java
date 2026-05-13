@@ -5,6 +5,7 @@ import com.unitbv.collectorshub.exceptions.ApiException;
 import com.unitbv.collectorshub.model.dto.AddReviewDTO;
 import com.unitbv.collectorshub.model.dto.EditReviewDTO;
 import com.unitbv.collectorshub.model.dto.ReviewDTO;
+import com.unitbv.collectorshub.model.dto.ReviewStatsDTO;
 import com.unitbv.collectorshub.model.entities.Review;
 import com.unitbv.collectorshub.model.entities.User;
 import com.unitbv.collectorshub.repositories.ReviewRepository;
@@ -12,6 +13,8 @@ import com.unitbv.collectorshub.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -72,5 +75,36 @@ public class ReviewService {
         Review review = reviewRepository.findReviewByReviewedUser_IdAndReviewingUser_Id(reviewedUserId, reviewingUserId)
                 .orElseThrow(() -> new ApiException("Review not found", 404));
         reviewRepository.delete(review);
+    }
+    public List<ReviewDTO> getReviewsForUser(Long userId) {
+        return reviewRepository.findAllByReviewedUser_Id(userId)
+                .stream()
+                .map(r -> ReviewDTO.builder()
+                        .id(r.getId())
+                        .reviewedUserId(r.getReviewedUser().getId())
+                        .reviewingUserId(r.getReviewingUser().getId())
+                        .reviewingUsername(r.getReviewingUser().getUsername())
+                        .comment(r.getComment())
+                        .opinion(r.getOpinion())
+                        .build())
+                .toList();
+    }
+
+    public ReviewStatsDTO getReviewStats(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException("User not found", 404));
+
+        int total = reviewRepository.countByReviewedUser_Id(userId);
+        int positive = reviewRepository.countByReviewedUser_IdAndOpinion(userId, 0);
+        int negative = total - positive;
+        double percentage = total > 0 ? (positive * 100.0) / total : 0.0;
+
+        return ReviewStatsDTO.builder()
+                .userId(userId)
+                .totalReviews(total)
+                .positiveReviews(positive)
+                .negativeReviews(negative)
+                .positivePercentage(Math.round(percentage * 10.0) / 10.0)
+                .build();
     }
 }
