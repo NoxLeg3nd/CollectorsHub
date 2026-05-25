@@ -13,19 +13,11 @@ import lombok.*;
 public class ProductDTO {
     @Id
     private Long id;
-    @NonNull
     private String name;
-    @NonNull
     private String category;
-    @NonNull
     private String collection;
-    @NonNull
     private Integer manufactureYear;
-    @Nullable
     private String image;
-    @NonNull
     private String description;
-    @NonNull
     private Long userId;
-
 }

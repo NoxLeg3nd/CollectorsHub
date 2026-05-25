@@ -27,13 +27,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "  LOWER(p.category) % LOWER(:query) OR " +
             "  LOWER(p.category) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "  LOWER(p.collection) % LOWER(:query) OR " +
-            "  LOWER(p.collection) LIKE LOWER(CONCAT('%', :query, '%'))" +
+            "  LOWER(p.collection) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "  LOWER(p.description) LIKE LOWER(CONCAT('%', :query, '%'))" +
             ") " +
             "ORDER BY similarity(p.name, :query) DESC",
             countQuery = "SELECT count(*) FROM product_table p " +
                     "WHERE p.user_id = :userId AND (" +
                     "LOWER(p.name) % LOWER(:query) OR " +
-                    "LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')))",
+                    "LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+                    "LOWER(p.description) LIKE LOWER(CONCAT('%', :query, '%')))",
             nativeQuery = true)
     Page<Product> searchByUserId(@Param("userId") Long userId,
                                  @Param("query") String query,

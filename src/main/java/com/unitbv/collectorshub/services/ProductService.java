@@ -2,7 +2,6 @@ package com.unitbv.collectorshub.services;
 
 import com.unitbv.collectorshub.exceptions.ApiException;
 import com.unitbv.collectorshub.model.dto.*;
-import com.unitbv.collectorshub.model.entities.Favourites;
 import com.unitbv.collectorshub.model.entities.Listing;
 import com.unitbv.collectorshub.model.entities.Product;
 import com.unitbv.collectorshub.model.entities.User;
@@ -25,7 +24,7 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ListingRepository listingRepository;
-    private final FavouritesRepository  favouritesRepository;
+    private final FavouritesRepository favouritesRepository;
     private final UserRepository userRepository;
 
     public AddProductDTO addProduct(AddProductDTO addProductDTO) {
@@ -104,6 +103,7 @@ public class ProductService {
         product.setName(editProductDTO.getNewProductName());
         product.setDescription(editProductDTO.getNewProductDescription());
         product.setCategory(editProductDTO.getNewProductCategory());
+        product.setCollection(editProductDTO.getNewProductCollection());
         product.setManufactureYear(editProductDTO.getNewManufactureYear());
         product.setImage(editProductDTO.getNewProductImage());
         productRepository.save(product);
@@ -139,6 +139,7 @@ public class ProductService {
                 .userId(product.getUser().getId())
                 .build();
     }
+
     public Page searchProductsByUserId(Long userId, String query, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.searchByUserId(userId, query, pageable)

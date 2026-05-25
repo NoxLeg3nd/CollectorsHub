@@ -1,6 +1,7 @@
 package com.unitbv.collectorshub.controllers;
 
 import com.unitbv.collectorshub.model.dto.*;
+import com.unitbv.collectorshub.repositories.ListingRepository;
 import com.unitbv.collectorshub.services.FavouritesService;
 import com.unitbv.collectorshub.services.ListingService;
 import com.unitbv.collectorshub.services.ProductService;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -17,6 +20,7 @@ public class ProductController {
     private final ProductService productService;
     private final ListingService listingService;
     private final FavouritesService favouritesService;
+    private final ListingRepository listingRepository;
 
     @PostMapping("/addProduct")
     public ResponseEntity<AddProductDTO> addProduct(@RequestBody AddProductDTO addProductDTO) {
@@ -100,6 +104,7 @@ public class ProductController {
         favouritesService.removeFavourite(id);
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/searchProducts")
     public ResponseEntity<Page<ProductDTO>> searchProducts(
             @RequestParam Long userId,
@@ -108,11 +113,26 @@ public class ProductController {
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(productService.searchProductsByUserId(userId, query, page, size));
     }
+
     @GetMapping("/searchListings")
     public ResponseEntity<Page<ListingDTO>> searchListings(
             @RequestParam String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(listingService.searchListings(query, page, size));
+    }
+
+    @GetMapping("/getRecommendations")
+    public ResponseEntity<List<ListingDTO>> getRecommendations(
+            @RequestParam Long userId,
+            @RequestParam(defaultValue = "10") int limit) {
+        return ResponseEntity.ok(listingService.getRecommendations(userId, limit));
+    }
+
+    @GetMapping("/getActiveListingByProductId")
+    public ResponseEntity<Long> getActiveListingByProductId(@RequestParam Long productId) {
+        return listingRepository.findFirstByProduct_Id(productId)
+                .map(listing -> ResponseEntity.ok(listing.getId()))
+                .orElse(ResponseEntity.noContent().build());
     }
 }
