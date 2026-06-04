@@ -2,10 +2,13 @@ package com.unitbv.collectorshub.services;
 
 import com.unitbv.collectorshub.exceptions.ApiException;
 import com.unitbv.collectorshub.model.dto.*;
+import com.unitbv.collectorshub.model.entities.Listing;
+import com.unitbv.collectorshub.model.entities.Product;
 import com.unitbv.collectorshub.model.entities.User;
-import com.unitbv.collectorshub.repositories.UserRepository;
+import com.unitbv.collectorshub.repositories.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +20,15 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final ListingRepository listingRepository;
+    private final FavouritesRepository favouritesRepository;
+    private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
+
+    private boolean isValidEmail(String email) {
+        return email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+    }
 
     public List getAllUsers() {
         return userRepository.findAll().stream()
@@ -35,6 +46,10 @@ public class UserService {
                 addUserDTO.getUsername().isBlank() ||
                 addUserDTO.getPassword().isBlank()) {
             throw new ApiException("Username, Email or Password cannot be empty", 400);
+        }
+
+        if (!isValidEmail(addUserDTO.getEmail())) {
+            throw new ApiException("Invalid email address", 400);
         }
 
         if (userRepository.findByUsername(addUserDTO.getUsername()).isPresent() ||
@@ -55,6 +70,21 @@ public class UserService {
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ApiException("User not found", 404));
+
+        List<Listing> listings = listingRepository.findAllByUserId(id, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        for (Listing listing : listings) {
+            favouritesRepository.deleteAll(favouritesRepository.findAllByListing_Id(listing.getId()));
+        }
+        listingRepository.deleteAll(listings);
+
+        List<Product> products = productRepository.findAllByUser_Id(id, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        productRepository.deleteAll(products);
+
+        reviewRepository.deleteAll(reviewRepository.findAllByReviewedUser_Id(id));
+        reviewRepository.deleteAll(reviewRepository.findAllByReviewingUser_Id(id));
+
+        favouritesRepository.deleteAll(favouritesRepository.findAllByUser_Id(id));
+
         userRepository.delete(user);
     }
 
@@ -75,9 +105,15 @@ public class UserService {
     public EditUserDetailsDTO editUserDetails(Long id, EditUserDetailsDTO editUserDetailsDTO) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ApiException("User not found", 404));
+
         if (editUserDetailsDTO.getNewEmail().isBlank() || editUserDetailsDTO.getNewUsername().isBlank()) {
             throw new ApiException("Email or Username cannot be empty", 400);
         }
+
+        if (!isValidEmail(editUserDetailsDTO.getNewEmail())) {
+            throw new ApiException("Invalid email address", 400);
+        }
+
         user.setEmail(editUserDetailsDTO.getNewEmail());
         user.setUsername(editUserDetailsDTO.getNewUsername());
         userRepository.save(user);
