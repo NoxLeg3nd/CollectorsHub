@@ -9,15 +9,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewDTO {
-    @Id
     private Long id;
-    @NonNull
     private Long reviewedUserId;
-    @NonNull
     private Long reviewingUserId;
     private String reviewingUsername;
-    @NonNull
     private String comment;
-    @NonNull
     private Integer opinion;
 }

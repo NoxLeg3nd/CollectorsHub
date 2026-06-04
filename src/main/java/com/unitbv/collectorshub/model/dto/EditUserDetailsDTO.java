@@ -7,8 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EditUserDetailsDTO {
-    @NonNull
     private String newEmail;
-    @NonNull
     private String newUsername;
 }

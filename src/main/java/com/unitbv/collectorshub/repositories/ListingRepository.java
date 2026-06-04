@@ -16,6 +16,7 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
     Optional<Listing> findById(Long id);
     Page<Listing> findAllByUserId(Long userId, Pageable pageable);
     Page<Listing> findAllByIsActiveTrue(Pageable pageable);
+    long countByIsActiveTrue();
     Optional<Listing> findFirstByProduct_Id(Long productId);
     List<Listing> findAllByProduct_Id(Long id);
 
@@ -41,16 +42,7 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
             nativeQuery = true)
     Page<Listing> searchAll(@Param("query") String query, Pageable pageable);
 
-    @Query(value = "SELECT l.* FROM listing_table l " +
-            "JOIN product_table p ON l.product_id = p.id " +
-            "WHERE l.is_active = true AND l.user_id != :userId " +
-            "AND p.category IN :categories " +
-            "ORDER BY RANDOM()",
-            countQuery = "SELECT count(*) FROM listing_table l " +
-                    "JOIN product_table p ON l.product_id = p.id " +
-                    "WHERE l.is_active = true AND l.user_id != :userId " +
-                    "AND p.category IN :categories",
-            nativeQuery = true)
+    @Query("SELECT l FROM Listing l WHERE l.isActive = true AND l.user.id != :userId AND l.product.category IN :categories")
     Page<Listing> findRecommendedByCategories(
             @Param("userId") Long userId,
             @Param("categories") List<String> categories,

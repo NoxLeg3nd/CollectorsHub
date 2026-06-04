@@ -8,8 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 
 public class EditUserPasswordDTO {
-    @NonNull
     private String currentPassword;
-    @NonNull
     private String newPassword;
 }

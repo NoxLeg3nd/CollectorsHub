@@ -8,8 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 
 public class AddFavouriteDTO {
-    @NonNull
     private Long userId;
-    @NonNull
     private Long listingId;
 }

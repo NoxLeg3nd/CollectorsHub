@@ -25,6 +25,7 @@ public class UserService {
                         .id(user.getId())
                         .email(user.getEmail())
                         .username(user.getUsername())
+                        .role(user.getRole())
                         .build())
                 .toList();
     }
@@ -67,6 +68,7 @@ public class UserService {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .role(user.getRole())
                 .build();
     }
 

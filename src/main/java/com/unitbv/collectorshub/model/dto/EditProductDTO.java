@@ -8,16 +8,10 @@ import lombok.*;
 @AllArgsConstructor
 
 public class EditProductDTO {
-    @NonNull
     private String newProductName;
-    @NonNull
     private String newProductDescription;
-    @Nullable
     private String newProductImage;
-    @NonNull
     private String newProductCollection;
-    @NonNull
     private String newProductCategory;
-    @NonNull
     private Integer newManufactureYear;
 }

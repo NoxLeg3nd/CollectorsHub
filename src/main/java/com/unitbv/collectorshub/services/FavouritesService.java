@@ -32,6 +32,11 @@ public class FavouritesService {
         Listing listing = listingRepository.findById(addFavouriteDTO.getListingId())
                 .orElseThrow(() -> new ApiException("Listing not found", 404));
 
+        if (favouritesRepository.existsByUser_IdAndListing_Id(
+                addFavouriteDTO.getUserId(), addFavouriteDTO.getListingId())) {
+            throw new ApiException("Listing is already in favourites", 409);
+        }
+
         Favourites favourite = Favourites.builder()
                 .user(user)
                 .listing(listing)

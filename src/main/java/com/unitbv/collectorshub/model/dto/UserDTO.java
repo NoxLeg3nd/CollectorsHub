@@ -9,12 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
-    @Id
     private Long id;
-    @NonNull
     private String email;
-    @NonNull
     private String username;
-    @NonNull
     private String password;
 }

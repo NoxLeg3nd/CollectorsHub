@@ -14,10 +14,18 @@ public class Listing {
     @Id
     @GeneratedValue
     private Long id;
+
     private String link;
+
+    @Column(nullable = false)
     private String contact;
+
+    @Column(nullable = false)
     private Boolean isActive;
+
+    @Column(nullable = false)
     private BigDecimal price;
+
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)

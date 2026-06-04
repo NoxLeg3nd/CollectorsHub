@@ -11,7 +11,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDTO {
-    @Id
     private Long id;
     private String name;
     private String category;

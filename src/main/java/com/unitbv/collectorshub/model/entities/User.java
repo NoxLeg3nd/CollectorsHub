@@ -13,7 +13,17 @@ public class User {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private String role = "USER";
 }

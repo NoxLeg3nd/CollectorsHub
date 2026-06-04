@@ -11,19 +11,11 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class AddListingDTO {
 
-    @NonNull
     private Long productId;
-    @NonNull
     private String link;
-    @NonNull
     private String contact;
-    @NonNull
     private Boolean isActive;
-    @NonNull
     private BigDecimal price;
-    @NonNull
     private String description;
-    @NonNull
     private Long userId;
-
 }

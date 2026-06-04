@@ -1,16 +1,16 @@
 package com.unitbv.collectorshub.model.dto;
 
+import jakarta.persistence.Id;
 import lombok.*;
 
 @Builder
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class GetUserDTO {
     private Long id;
-    @NonNull
-    private String username;
-    @NonNull
     private String email;
+    private String username;
+    private String role;
 }

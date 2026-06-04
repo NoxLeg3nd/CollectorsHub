@@ -7,8 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EditReviewDTO {
-    @NonNull
     private String newComment;
-    @NonNull
     private Integer newOpinion;
 }

@@ -13,11 +13,21 @@ public class Product {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String category;
+
+    @Column(nullable = false)
     private String collection;
+
     private Integer manufactureYear;
+
     private String image;
+
+    @Column(nullable = false)
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER)
