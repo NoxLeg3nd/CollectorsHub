@@ -27,7 +27,6 @@ public class ListingService {
     private final ListingRepository listingRepository;
     private final ProductRepository productRepository;
     private final FavouritesRepository favouritesRepository;
-    private final ProductService productService;
     private final UserRepository userRepository;
 
     public AddListingDTO addListing(AddListingDTO addListingDTO) {
@@ -101,9 +100,15 @@ public class ListingService {
                         .build());
     }
 
+    public Long getActiveListingIdByProductId(Long productId) {
+        Listing listing = listingRepository.findFirstByProduct_IdAndIsActiveTrue(productId)
+                .orElseThrow(() -> new ApiException("Listing not found", 404));
+        return listing.getId();
+    }
+
     public Page getAllListingsByUserId(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return listingRepository.findAllByUserId(userId, pageable)
+        return listingRepository.findAllByUser_Id(userId, pageable)
                 .map(listing -> ListingDTO.builder()
                         .id(listing.getId())
                         .link(listing.getLink())
@@ -223,12 +228,4 @@ public class ListingService {
                 .toList();
     }
 
-    public Optional<ListingDTO> getListingByProductId(Long productId) {
-        return listingRepository.findFirstByProduct_Id(productId)
-                .map(listing -> ListingDTO.builder()
-                        .id(listing.getId())
-                        .price(listing.getPrice())
-                        .isActive(listing.getIsActive())
-                        .build());
-    }
 }

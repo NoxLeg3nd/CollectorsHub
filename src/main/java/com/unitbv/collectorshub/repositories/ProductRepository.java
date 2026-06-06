@@ -13,11 +13,6 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findById(Long id);
-    Optional<Product> findByName(String name);
-    Optional<Product> findByCollection(String collection);
-    Optional<Product> findByManufactureYear(Integer manufactureYear);
-    Optional<Product> findByNameAndCollectionAndManufactureYear(String name, String collection, Integer manufactureYear);
-    Optional<Product> findByCategory(String category);
     Optional<Product> findByUser_Id(Long userId);
     Page<Product> findAllByUser_Id(Long userId, Pageable pageable);
     @Query(value = "SELECT p.* FROM product_table p " +

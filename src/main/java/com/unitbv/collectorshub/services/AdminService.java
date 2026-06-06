@@ -69,7 +69,7 @@ public class AdminService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ApiException("User not found", 404));
 
-        List<Listing> listings = listingRepository.findAllByUserId(id, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        List<Listing> listings = listingRepository.findAllByUser_Id(id, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
         for (Listing listing : listings) {
             favouritesRepository.deleteAll(favouritesRepository.findAllByListing_Id(listing.getId()));
         }

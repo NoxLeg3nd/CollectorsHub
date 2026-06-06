@@ -14,11 +14,11 @@ import java.util.Optional;
 @Repository
 public interface ListingRepository extends JpaRepository<Listing, Long> {
     Optional<Listing> findById(Long id);
-    Page<Listing> findAllByUserId(Long userId, Pageable pageable);
+    Page<Listing> findAllByUser_Id(Long userId, Pageable pageable);
     Page<Listing> findAllByIsActiveTrue(Pageable pageable);
     long countByIsActiveTrue();
-    Optional<Listing> findFirstByProduct_Id(Long productId);
     List<Listing> findAllByProduct_Id(Long id);
+    Optional<Listing> findFirstByProduct_IdAndIsActiveTrue(Long productId);
 
     @Query(value = "SELECT l.* FROM listing_table l " +
             "JOIN product_table p ON l.product_id = p.id " +

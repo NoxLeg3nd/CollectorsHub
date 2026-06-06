@@ -106,33 +106,22 @@ public class ProductController {
     }
 
     @GetMapping("/searchProducts")
-    public ResponseEntity<Page<ProductDTO>> searchProducts(
-            @RequestParam Long userId,
-            @RequestParam String query,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<ProductDTO>> searchProducts(@RequestParam Long userId, @RequestParam String query, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(productService.searchProductsByUserId(userId, query, page, size));
     }
 
     @GetMapping("/searchListings")
-    public ResponseEntity<Page<ListingDTO>> searchListings(
-            @RequestParam String query,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<ListingDTO>> searchListings(@RequestParam String query, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(listingService.searchListings(query, page, size));
     }
 
     @GetMapping("/getRecommendations")
-    public ResponseEntity<List<ListingDTO>> getRecommendations(
-            @RequestParam Long userId,
-            @RequestParam(defaultValue = "10") int limit) {
+    public ResponseEntity<List<ListingDTO>> getRecommendations(@RequestParam Long userId, @RequestParam(defaultValue = "10") int limit) {
         return ResponseEntity.ok(listingService.getRecommendations(userId, limit));
     }
 
-    @GetMapping("/getActiveListingByProductId")
-    public ResponseEntity<Long> getActiveListingByProductId(@RequestParam Long productId) {
-        return listingRepository.findFirstByProduct_Id(productId)
-                .map(listing -> ResponseEntity.ok(listing.getId()))
-                .orElse(ResponseEntity.noContent().build());
+    @GetMapping("/getActiveListingIdByProductId")
+    public ResponseEntity<Long> getActiveListingIdByProductId(@RequestParam Long productId) {
+        return ResponseEntity.ok(listingService.getActiveListingIdByProductId(productId));
     }
 }
