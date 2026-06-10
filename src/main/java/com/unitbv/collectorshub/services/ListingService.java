@@ -30,8 +30,8 @@ public class ListingService {
     private final UserRepository userRepository;
 
     public AddListingDTO addListing(AddListingDTO addListingDTO) {
-        if (addListingDTO.getLink().isBlank() || addListingDTO.getContact().isBlank()) {
-            throw new ApiException("Fields cannot be empty", 400);
+        if (addListingDTO.getContact() == null || addListingDTO.getContact().isBlank()) {
+            throw new ApiException("Contact cannot be empty", 400);
         }
 
         Product product = productRepository.findById(addListingDTO.getProductId())
@@ -58,8 +58,8 @@ public class ListingService {
         Listing listing = listingRepository.findById(id)
                 .orElseThrow(() -> new ApiException("Listing not found", 404));
 
-        if (editListingDTO.getNewLink().isBlank() || editListingDTO.getNewContact().isBlank()) {
-            throw new ApiException("Fields cannot be empty", 400);
+        if (editListingDTO.getNewContact() == null || editListingDTO.getNewContact().isBlank()) {
+            throw new ApiException("Contact cannot be empty", 400);
         }
 
         Product product = productRepository.findById(editListingDTO.getNewProductId())
@@ -101,9 +101,9 @@ public class ListingService {
     }
 
     public Long getActiveListingIdByProductId(Long productId) {
-        Listing listing = listingRepository.findFirstByProduct_IdAndIsActiveTrue(productId)
-                .orElseThrow(() -> new ApiException("Listing not found", 404));
-        return listing.getId();
+        return listingRepository.findFirstByProduct_Id(productId)
+                .map(Listing::getId)
+                .orElse(null);
     }
 
     public Page getAllListingsByUserId(Long userId, int page, int size) {

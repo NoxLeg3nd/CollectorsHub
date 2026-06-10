@@ -28,6 +28,12 @@ public class ProductService {
     private final UserRepository userRepository;
 
     public AddProductDTO addProduct(AddProductDTO addProductDTO) {
+        if (addProductDTO.getProductName() == null || addProductDTO.getProductName().isBlank() ||
+                addProductDTO.getProductCategory() == null || addProductDTO.getProductCategory().isBlank() ||
+                addProductDTO.getProductCollection() == null || addProductDTO.getProductCollection().isBlank()) {
+            throw new ApiException("Product details cannot be empty", 400);
+        }
+
         User user = userRepository.findById(addProductDTO.getUserId())
                 .orElseThrow(() -> new ApiException("User not found", 404));
 
@@ -40,11 +46,6 @@ public class ProductService {
                 .user(user)
                 .image(addProductDTO.getProductImage())
                 .build();
-
-        if (product.getName().isBlank() || product.getCategory().isBlank()
-                || product.getCollection().isBlank() || product.getDescription().isBlank()) {
-            throw new ApiException("Product details cannot be empty", 400);
-        }
 
         productRepository.save(product);
         return addProductDTO;
@@ -95,8 +96,9 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ApiException("Product not found", 404));
 
-        if (editProductDTO.getNewProductName().isBlank() || editProductDTO.getNewProductCategory().isBlank()
-                || editProductDTO.getNewProductDescription().isBlank() || editProductDTO.getNewProductCollection().isBlank()) {
+        if (editProductDTO.getNewProductName() == null || editProductDTO.getNewProductName().isBlank() ||
+                editProductDTO.getNewProductCategory() == null || editProductDTO.getNewProductCategory().isBlank() ||
+                editProductDTO.getNewProductCollection() == null || editProductDTO.getNewProductCollection().isBlank()) {
             throw new ApiException("Fields cannot be empty", 400);
         }
 

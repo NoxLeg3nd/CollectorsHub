@@ -26,8 +26,7 @@ public class Product {
     private Integer manufactureYear;
 
     private String image;
-
-    @Column(nullable = false)
+    
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER)

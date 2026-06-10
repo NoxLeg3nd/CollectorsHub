@@ -122,6 +122,8 @@ public class ProductController {
 
     @GetMapping("/getActiveListingIdByProductId")
     public ResponseEntity<Long> getActiveListingIdByProductId(@RequestParam Long productId) {
-        return ResponseEntity.ok(listingService.getActiveListingIdByProductId(productId));
+        Long listingId = listingService.getActiveListingIdByProductId(productId);
+        if (listingId == null) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(listingId);
     }
 }
