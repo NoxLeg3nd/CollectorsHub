@@ -137,6 +137,7 @@ public class AdminService {
                 .map(r -> ReviewDTO.builder()
                         .id(r.getId())
                         .reviewedUserId(r.getReviewedUser().getId())
+                        .reviewedUsername(r.getReviewedUser().getUsername())
                         .reviewingUserId(r.getReviewingUser().getId())
                         .reviewingUsername(r.getReviewingUser().getUsername())
                         .comment(r.getComment())

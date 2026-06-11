@@ -11,6 +11,7 @@ import lombok.*;
 public class ReviewDTO {
     private Long id;
     private Long reviewedUserId;
+    private String reviewedUsername;
     private Long reviewingUserId;
     private String reviewingUsername;
     private String comment;
