@@ -48,6 +48,10 @@ public class UserService {
             throw new ApiException("Username, Email or Password cannot be empty", 400);
         }
 
+        if (addUserDTO.getPassword().length() < 8) {
+            throw new ApiException("Password must be at least 8 characters", 400);
+        }
+
         if (!isValidEmail(addUserDTO.getEmail())) {
             throw new ApiException("Invalid email address", 400);
         }
@@ -126,6 +130,10 @@ public class UserService {
 
         if (editUserPasswordDTO.getCurrentPassword().isBlank() || editUserPasswordDTO.getNewPassword().isBlank()) {
             throw new ApiException("Password cannot be empty", 400);
+        }
+
+        if (editUserPasswordDTO.getNewPassword().length() < 8) {
+            throw new ApiException("Password must be at least 8 characters", 400);
         }
 
         if (!passwordEncoder.matches(editUserPasswordDTO.getCurrentPassword(), user.getPassword())) {
